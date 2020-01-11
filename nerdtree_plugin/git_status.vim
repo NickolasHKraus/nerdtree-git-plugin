@@ -1,3 +1,5 @@
+" vim: fdm=marker
+"
 " ============================================================================
 " File:        git_status.vim
 " Description: plugin for NERD Tree that provides git status support
@@ -12,6 +14,7 @@
 if exists('g:loaded_nerdtree_git_status')
     finish
 endif
+
 let g:loaded_nerdtree_git_status = 1
 
 if !exists('g:NERDTreeShowGitStatus')
@@ -19,7 +22,7 @@ if !exists('g:NERDTreeShowGitStatus')
 endif
 
 if g:NERDTreeShowGitStatus == 0
-    finish
+  finish
 endif
 
 if !exists('g:NERDTreeMapNextHunk')
@@ -30,6 +33,13 @@ if !exists('g:NERDTreeMapPrevHunk')
     let g:NERDTreeMapPrevHunk = '[c'
 endif
 
+" NERDTreeUpdateOnWrite
+" Values: 0 or 1
+" Default: 1
+"
+" If NERDTreeUpdateOnWrite is set to 1, a write will trigger an update of
+" NERDTree. This variable is used exclusively by the BufWritePostUpdate
+" function, which will execute on BufWritePost events.
 if !exists('g:NERDTreeUpdateOnWrite')
     let g:NERDTreeUpdateOnWrite = 1
 endif
@@ -56,7 +66,6 @@ if !exists('s:NERDTreeIndicatorMap')
                 \ 'Unknown'   : '?'
                 \ }
 endif
-
 
 function! NERDTreeGitStatusRefreshListener(event)
     if !exists('b:NOT_A_GIT_REPOSITORY')
@@ -259,14 +268,18 @@ endfunction
 augroup nerdtreegitplugin
     autocmd CursorHold * silent! call s:CursorHoldUpdate()
 augroup END
-" FUNCTION: s:CursorHoldUpdate() {{{2
+" FUNCTION: s:CursorHoldUpdate() {{{1
+" ARGS:
+" RETURN:
 function! s:CursorHoldUpdate()
-    if g:NERDTreeUpdateOnCursorHold != 1
+    " NERDTreeUpdateOnWrite may only be 0 or 1.
+    if g:NERDTreeUpdateOnWrite == 0
         return
     endif
 
+    " NERDTree.IsOpen() returns a boolean.
     if !g:NERDTree.IsOpen()
-        return
+         return
     endif
 
     " Do not update when a special buffer is selected
@@ -274,47 +287,55 @@ function! s:CursorHoldUpdate()
         return
     endif
 
+    " get number of the current window so we can return to it
     let l:winnr = winnr()
-    let l:altwinnr = winnr('#')
 
     call g:NERDTree.CursorToTreeWin()
     call b:NERDTree.root.refreshFlags()
     call NERDTreeRender()
 
-    exec l:altwinnr . 'wincmd w'
+    " return cursor to previous window
     exec l:winnr . 'wincmd w'
+
 endfunction
 
 augroup nerdtreegitplugin
-    autocmd BufWritePost * call s:FileUpdate(expand('%:p'))
+    autocmd BufWritePost * call s:BufWritePostUpdate(expand('%:p'))
 augroup END
-" FUNCTION: s:FileUpdate(fname) {{{2
-function! s:FileUpdate(fname)
-    if g:NERDTreeUpdateOnWrite != 1
+" FUNCTION: s:BufWritePostUpdate(fname) {{{1
+" ARGS:
+" RETURN:
+function! s:BufWritePostUpdate(fname)
+    " NERDTreeUpdateOnWrite may only be 0 or 1.
+    if g:NERDTreeUpdateOnWrite == 0
         return
     endif
 
+    " NERDTree.IsOpen() returns a boolean.
     if !g:NERDTree.IsOpen()
-        return
+         return
     endif
 
+    " get number of the current window so we can return to it
     let l:winnr = winnr()
-    let l:altwinnr = winnr('#')
 
     call g:NERDTree.CursorToTreeWin()
-    let l:node = b:NERDTree.root.findNode(g:NERDTreePath.New(a:fname))
-    if l:node != {}
-        call l:node.refreshFlags()
-        let l:node = l:node.parent
-        while !empty(l:node)
-            call l:node.refreshDirFlags()
-            let l:node = l:node.parent
+    let l:filePath = g:NERDTreePath.New(a:fname)
+    let l:fileNode = b:NERDTree.root.findNode(l:filePath)
+
+    if l:fileNode != {}
+        call l:fileNode.refreshFlags()
+        let l:dirNode = l:fileNode.parent
+        while !empty(l:dirNode)
+            call l:dirNode.refreshDirFlags()
+            let l:dirNode = l:dirNode.parent
         endwhile
         call NERDTreeRender()
     endif
 
-    exec l:altwinnr . 'wincmd w'
+    " return cursor to previous window
     exec l:winnr . 'wincmd w'
+
 endfunction
 
 augroup AddHighlighting
