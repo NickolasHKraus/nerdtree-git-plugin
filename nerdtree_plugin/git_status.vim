@@ -290,7 +290,9 @@ function! s:CursorHoldUpdate()
     " get number of the current window so we can return to it
     let l:winnr = winnr()
 
+    " move cursor to NERDTree window
     call g:NERDTree.CursorToTreeWin()
+
     call b:NERDTree.root.refreshFlags()
     call NERDTreeRender()
 
@@ -319,7 +321,9 @@ function! s:BufWritePostUpdate(fname)
     " get number of the current window so we can return to it
     let l:winnr = winnr()
 
+    " move cursor to NERDTree window
     call g:NERDTree.CursorToTreeWin()
+
     let l:filePath = g:NERDTreePath.New(a:fname)
     let l:fileNode = b:NERDTree.root.findNode(l:filePath)
 

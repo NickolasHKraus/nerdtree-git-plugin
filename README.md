@@ -1,28 +1,42 @@
-nerdtree-git-plugin
-===================
+# NERDTree Git Plugin
 
-A plugin of NERDTree showing git status flags. Works with the **LATEST** version of NERDTree.
-
-The original project [git-nerdtree](https://github.com/Xuyuanp/git-nerdtree) will not be maintained any longer.
-
-
-![Imgur](http://i.imgur.com/jSCwGjU.gif?1)
+This Vim plugin is a rewrite of Xuyuanp's [nerdtree-git-plugin](https://github.com/Xuyuanp/nerdtree-git-plugin).
 
 ## Installation
 
-For Pathogen
+## Installation
 
-`git clone https://github.com/Xuyuanp/nerdtree-git-plugin.git ~/.vim/bundle/nerdtree-git-plugin`
+### [Pathogen](https://github.com/tpope/vim-pathogen)
 
-Now reload the `vim`
+```bash
+git clone git@github.com:NickolasHKraus/nerdtree-git-plugin.git ~/.vim/bundle/nerdtree-git-plugin
+```
 
-For Vundle
+## [Vundle](https://github.com/VundleVim/Vundle.vim)
 
-`Plugin 'scrooloose/nerdtree'`
+`.vimrc`
 
-`Plugin 'Xuyuanp/nerdtree-git-plugin'`
+```vim
+Plugin 'scrooloose/nerdtree'
+Plugin 'NickolasHKraus/nerdtree-git-plugin'
+```
 
-For NeoBundle
+```bash
+vim +PluginInstall +qall
+```
+
+### [NeoBundle](https://github.com/Shougo/neobundle.vim)
+
+`.vimrc`
+
+```vim
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'NickolasHKraus/nerdtree-git-plugin'
+```
+
+```bash
+vim +NeoBundleInstall +qall
+```
 
 `NeoBundle 'scrooloose/nerdtree'`
 
